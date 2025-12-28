@@ -21,16 +21,22 @@ const cached: MongooseCache = globalForMongoose.mongoose ?? { conn: null, promis
 globalForMongoose.mongoose = cached;
 
 export async function connectToDatabase() {
-    if (cached.conn) {
-        return cached.conn;
-    }
-
-    if (!cached.promise) {
-        cached.promise = mongoose.connect(MONGODB_URI, {
-            bufferCommands: false,
-        });
-    }
-
-    cached.conn = await cached.promise;
+  if (cached.conn) {
+    console.log("Using cached MongoDB connection");
     return cached.conn;
+  }
+
+  console.log("Connecting to MongoDB...");
+
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(MONGODB_URI!, {
+      bufferCommands: false,
+    });
+  }
+
+  cached.conn = await cached.promise;
+  console.log("MongoDB connected");
+
+  return cached.conn;
 }
+
